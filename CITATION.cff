@@ -1,0 +1,21 @@
+cff-version: "1.2.0"
+message: "If you use this work, please cite it as below."
+title: "Birth Rule: A slow stare at Wolfram code"
+abstract: "A cellular-automaton picture that starts every day from the binary digits of a birthday and adds one row per second, using elementary rules numbered by the scheme of Wolfram (1983)."
+authors:
+  - family-names: "Park"
+    given-names: "Sohyun"
+    affiliation: "George Mason University Korea"
+keywords:
+  - "cellular automata"
+  - "elementary cellular automaton"
+  - "rule 30"
+  - "generative art"
+  - "data art"
+license:
+  - "MIT"
+  - "CC-BY-4.0"
+repository-code: "https://github.com/wherewindstay/birth-rule"
+url: "https://wherewindstay.github.io/birth-rule/"
+type: "software"
+year: 2026

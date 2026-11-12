@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birth Rule</title>
+<style>
+:root{--bg:#F2EFE8;--ink:#181A1D;--muted:#5E6166;--line:#D8D3C8;--red:#DD2A15}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);
+ font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+main{max-width:1320px;margin:auto;padding:28px 24px 40px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
+h1{font-size:26px;letter-spacing:-.5px;margin:0;font-weight:600}.sub{color:var(--muted);margin:4px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+button,select,input{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+button{cursor:pointer}button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.meta{font:12px/1.6 ui-monospace,Menlo,monospace;color:var(--muted)}
+canvas{display:block;image-rendering:pixelated}
+aside{border:1px solid var(--line);background:#fff;border-radius:8px;padding:14px 18px;margin:14px 0}
+aside h2{font-size:15px;margin:12px 0 4px}aside h2:first-child{margin-top:0}
+aside ul{margin:4px 0;padding-left:18px}aside li{margin:2px 0}
+aside code{font:12px ui-monospace,Menlo,monospace;background:#F2EFE8;padding:1px 4px;border-radius:3px}
+table{border-collapse:collapse;font:12px ui-monospace,Menlo,monospace}td,th{border:1px solid var(--line);padding:2px 6px;text-align:right}
+footer{margin-top:18px;color:var(--muted);font-size:12px}
+@media(max-width:760px){main{padding:16px 14px 28px}h1{font-size:21px}}
+
+.about{max-width:900px;margin:14px 0 4px;font-size:14px}
+.about ul{margin:4px 0;padding-left:18px}.about li{margin:2px 0}
+.about .intro{margin:0 0 8px}
+.about details{border-top:1px solid var(--line);padding:6px 0}
+.about details:last-child{border-bottom:1px solid var(--line)}
+.about summary{cursor:pointer;font-weight:600;padding:2px 0}
+.about a{color:var(--ink)}
+.about .rt{overflow-x:auto;margin:6px 0 2px}.about .rt th{text-align:left;font-weight:400;color:var(--muted)}
+.about .rt td{text-align:center;min-width:30px}
+
+.bday{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 4px}
+.bday .q{font-weight:600;margin-right:4px}.bday input{width:7.5em}
+#bnote{color:var(--muted);font-size:13px;margin:2px 0 10px}
+main{padding-top:12px}
+header{margin:12px 0 0;padding-bottom:10px}h1{font-size:22px}
+#cv{width:min(100%,calc(100vh - 24px));height:auto;margin:0 auto;background:#111417}
+.stage{margin:0}
+:root{--k:1}@media(max-width:760px){:root{--k:.6}}
+body{--pt:0px;--pr:0px;--pb:0px;--pl:0px;--bz:0px}
+body:not(.pv) .stage{container-type:inline-size}
+.frame{position:relative;width:max-content;max-width:100%;
+ padding:calc(var(--pt)*var(--k)) calc(var(--pr)*var(--k)) calc(var(--pb)*var(--k)) calc(var(--pl)*var(--k))}
+.scr{position:relative;padding:calc(var(--bz)*var(--k))}
+body:not(.pv) #cv{margin:0;width:min(calc(100cqw - (var(--pl) + var(--pr) + 2*var(--bz))*var(--k)),
+ calc(100vh - 24px - (var(--pt) + var(--pb) + 2*var(--bz))*var(--k)))}
+.pv .frame,.pv .scr{display:contents}
+.fdeco,.fcap{display:none}
+.scr::after{content:none;position:absolute;inset:calc(var(--bz)*var(--k));pointer-events:none}
+.fr-retro{--pt:30px;--pr:30px;--pb:92px;--pl:30px;--bz:16px}
+.fr-retro .frame{background:linear-gradient(#E9E1CD,#D8CEB4);border-radius:18px 18px 10px 10px;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.65),inset 0 -5px 0 rgba(0,0,0,.08),0 10px 24px rgba(0,0,0,.18)}
+.fr-retro .scr{background:#2B2A27;border-radius:16px;box-shadow:inset 0 0 0 2px #B9AE94,inset 0 4px 10px rgba(0,0,0,.6)}
+.fr-retro #cv{border-radius:10px}
+.fr-retro .scr::after{content:'';border-radius:10px;background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 1px,transparent 1px 3px),
+ radial-gradient(ellipse at center,transparent 62%,rgba(0,0,0,.35) 100%)}
+.fr-retro .fdeco{display:block;position:absolute;left:calc(30px*var(--k));right:calc(30px*var(--k));bottom:calc(24px*var(--k));height:calc(40px*var(--k));
+ background:linear-gradient(#6B655A,#6B655A) left 6% center/34% calc(5px*var(--k)) no-repeat,
+ repeating-linear-gradient(90deg,#B3A98F 0 calc(4px*var(--k)),transparent calc(4px*var(--k)) calc(10px*var(--k))) right 4% center/36% 70% no-repeat}
+.fr-gallery{--pt:56px;--pr:56px;--pb:96px;--pl:56px}
+.fr-gallery .frame{background:#FBFAF6;box-shadow:inset 0 0 0 calc(11px*var(--k)) #1E1B18,inset 0 0 0 calc(12px*var(--k)) #55504A,
+ inset 0 0 calc(18px*var(--k)) calc(12px*var(--k)) rgba(0,0,0,.08),0 8px 20px rgba(0,0,0,.22)}
+.fr-gallery .scr{box-shadow:0 0 0 1px #D6D0C3,0 0 0 calc(4px*var(--k)) #F3F0E8,0 0 0 calc(4px*var(--k) + 1px) #E2DDD1}
+.fr-gallery .fcap{display:block;position:absolute;left:0;right:0;bottom:calc(36px*var(--k));text-align:center;
+ font:calc(13px*var(--k) + 2px)/1.4 Georgia,"Times New Roman",serif;color:#5A5650;letter-spacing:.5px}
+.fr-tv{--pt:34px;--pr:104px;--pb:34px;--pl:34px;--bz:14px}
+.fr-tv .frame{background:linear-gradient(#4C4945,#2D2B28);border-radius:26px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 26px rgba(0,0,0,.3)}
+.fr-tv .scr{background:#121110;border-radius:44px/34px;box-shadow:inset 0 0 0 3px #1B1A18,inset 0 0 0 5px #5A5650}
+.fr-tv #cv{border-radius:30px/24px}
+.fr-tv .scr::after{content:'';border-radius:30px/24px;background:radial-gradient(ellipse at 28% 18%,rgba(255,255,255,.12),transparent 38%),
+ radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%),repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px)}
+.fr-tv .fdeco{display:block;position:absolute;top:calc(40px*var(--k));bottom:calc(40px*var(--k));right:calc(22px*var(--k));width:calc(60px*var(--k));
+ background:radial-gradient(circle closest-side,#9A948A 0 62%,#1D1C1A 66% 100%) 50% 0/calc(52px*var(--k)) calc(52px*var(--k)) no-repeat,
+ radial-gradient(circle closest-side,#9A948A 0 62%,#1D1C1A 66% 100%) 50% calc(72px*var(--k))/calc(52px*var(--k)) calc(52px*var(--k)) no-repeat,
+ repeating-linear-gradient(0deg,#1A1917 0 calc(3px*var(--k)),transparent calc(3px*var(--k)) calc(8px*var(--k))) 50% 100%/100% 38% no-repeat}
+.fr-polaroid{--pt:20px;--pr:20px;--pb:84px;--pl:20px}
+.fr-polaroid .frame{background:#FDFCF8;box-shadow:0 1px 2px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.18)}
+.fr-polaroid .fcap{display:block;position:absolute;left:calc(26px*var(--k));right:calc(26px*var(--k));bottom:calc(30px*var(--k));
+ font:calc(16px*var(--k) + 4px)/1.2 "Bradley Hand","Segoe Print","Comic Sans MS",cursive;color:#3A3835}
+.fr-window{--k:1;--pt:26px;--pr:4px;--pb:4px;--pl:4px}
+.fr-window .frame{background:#fff;box-shadow:inset 0 0 0 1px #000,4px 4px 0 #000}
+.fr-window .fdeco{display:block;position:absolute;box-sizing:border-box;left:1px;right:1px;top:1px;height:25px;background:#fff;border-bottom:1px solid #000}
+.fr-window .fdeco::before{content:'';position:absolute;left:4px;right:4px;top:5px;bottom:5px;background:repeating-linear-gradient(#000 0 1px,#fff 1px 3px)}
+.fr-window .fdeco::after{content:'';position:absolute;box-sizing:border-box;left:9px;top:50%;margin-top:-7px;width:14px;height:14px;
+ background:#fff;border:1px solid #000;box-shadow:0 0 0 4px #fff}
+.fr-window .fcap{display:flex;position:absolute;left:0;right:0;top:0;height:26px;align-items:center;justify-content:center;pointer-events:none}
+.fr-window .fcap span{background:#fff;padding:0 12px;font:700 14px/1 ui-monospace,Menlo,"Courier New",monospace;color:#000;letter-spacing:.5px}
+.fr-float .frame{box-shadow:0 1px 3px rgba(0,0,0,.14),0 18px 40px rgba(0,0,0,.24)}
+.sub:empty{display:none}
+.src{max-width:900px;margin:22px 0 0;border-top:1px solid var(--line);padding-top:8px;font-size:13px;color:var(--muted)}
+.src summary{cursor:pointer;font-weight:600;color:var(--ink);padding:2px 0}
+.src ol{margin:8px 0;padding-left:20px}.src li{margin:6px 0}.src p{margin:8px 0}
+.src a{color:var(--ink);overflow-wrap:anywhere}
+#cap{display:none}
+.pv .about,.pv .bday,.pv #bnote,.pv .bar,.pv aside{display:none!important}
+.pv #cap{display:block;margin:10px 0 0;color:var(--muted);font-size:14px}
+.pv-daily .stage,.pv-birth .stage,.pv-class .stage{display:flex;flex-direction:column;align-items:center}
+.pv-daily #cap{font-size:18px;color:var(--ink);letter-spacing:.5px}
+.pv-weave .stage{display:flex;flex-direction:column;align-items:center}.pv-weave #cv{width:min(100%,380px)}
+.pv-strip #cv{width:100%}
+.pv-poster .stage{margin:10px auto;width:min(100%,520px);aspect-ratio:297/420;background:#fff;border:1px solid var(--line);
+ padding:7% 7% 5%;display:flex;flex-direction:column;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+.pv-poster #cv{width:100%;height:auto;flex:none}.pv-poster .stage{justify-content:space-between}
+.pv #cap b{white-space:nowrap}.about .rt th,#algo .rt th{white-space:nowrap}#algo .rt{overflow-x:auto;margin:6px 0 2px}#algo .rt td{text-align:center;min-width:30px}
+.pv-card .stage{margin:10px auto;width:min(100%,520px);aspect-ratio:1.586;background:#111417;border-radius:14px;overflow:hidden;
+ position:relative;display:flex;flex-direction:column}
+.pv-card #cv{width:100%;flex:1;min-height:0;object-fit:cover;object-position:top}
+.pv-poster #cap,.pv-card #cap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0}
+.pv-poster #cap b{font-size:30px;font-weight:600;color:var(--ink);letter-spacing:-.5px}.pv-poster #cap{padding-top:14px;font-size:12px}
+.pv-card #cap{padding:10px 16px;color:#C9CDD2;font-size:12px}.pv-card #cap b{font-size:20px;font-weight:600;color:#F2EFE8}
+.pv-class #cap{font:15px/1.6 ui-monospace,Menlo,monospace;color:var(--ink)}
+.pv-poster header,.pv-card header{display:none}
+</style></head>
+<body><main>
+
+<div class="stage"><div class="frame" id="frame"><div class="scr"><canvas id="cv" role="img" aria-label="Cellular automaton that starts from a birthday and adds one row per second"></canvas></div>
+<div class="fdeco" aria-hidden="true"></div><div class="fcap" id="fcap"></div></div>
+<div id="cap"></div></div>
+<header><div><h1 id="ttl">Birth Rule</h1>
+<p class="sub" id="sub">A slow stare at Wolfram code</p></div>
+<div class="bar" style="margin:0">
+<button id="algoBtn" data-label="Algorithm" aria-expanded="false" aria-controls="algo">Algorithm</button>
+<button id="infoBtn" data-label="Details" aria-expanded="false" aria-controls="info">Details</button></div></header>
+<div class="bday" role="group" aria-label="Birthday">
+<span class="q">Enter a birthday</span>
+<select id="bm" aria-label="Month"><option value="">Month</option></select>
+<select id="bd" aria-label="Day"><option value="">Day</option></select>
+<input id="by" type="number" inputmode="numeric" min="1900" max="2100" placeholder="Year (optional)" aria-label="Year">
+<button id="bgo">Start with this birthday</button>
+<button id="btoday">Today</button>
+<button id="brand">Random date</button>
+<button id="bclr">Clear</button>
+</div>
+<div id="bnote" aria-live="polite"></div>
+<div class="bar">
+<button id="pause" aria-pressed="false">Pause</button>
+<button id="png">Save PNG</button>
+</div>
+<aside id="algo" hidden>
+<h2>Algorithm</h2><ul><li>Starts every day at 00:00:00 from the binary digits of the birthday as the first row</li><li>Each second, computes the next row with that minute&#x27;s rule, then flips each cell with probability p</li><li>The rule is picked from 24 candidates by hashing the birthday, the date and the minutes counted from midnight. One minute uses one rule</li><li>p rises from 0.0005 on the hour to 0.02 at the half hour, then falls again until the next hour</li><li>Each time the page opens, it recomputes up to 86,400 rows from midnight to now. With no stored state, the same birthday and the same time give the same picture</li></ul>
+<h2>Cellular automata and rule numbers</h2><ul><li>Cells sit in one row, and each cell is 0 or 1</li><li>Each cell in the next row is set by three cells of the row above: left, self and right</li><li>Each of the 8 possible three-cell patterns has an output of 0 or 1</li><li>The 8 outputs, listed from 111 down to 000 and read as a binary number, give the rule number. There are 256 rules, from 0 to 255</li><li>For example, the output of rule 30 in the table below, 00011110, is 30 in binary</li></ul>
+<div class="rt"><table><tr><th>Three cells above</th><td>111</td><td>110</td><td>101</td><td>100</td><td>011</td><td>010</td><td>001</td><td>000</td></tr><tr><th>Output of rule 30</th><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr></table></div>
+<h2>24 rule candidates</h2><ul><li>30 and 110, each with its left-right mirror and its 0/1-swapped partners: 30, 86, 135, 149 and 110, 124, 137, 193</li><li>Rules that grow repeating, overlapping triangles from one center cell: 18, 22, 90, 105, 126, 146, 150</li><li>Rules that settle into a fixed pattern, a 2-step repeat or a one-way drift from one center cell: 4, 50, 108, 178, 184, 232</li><li>Others: 45, 54 and its 0/1-swapped partner 147</li><li>The candidates were chosen so the texture changes from minute to minute. They are not a representative sample of the rule classes</li></ul>
+</aside>
+<aside id="info" hidden>
+<h2>Formulas</h2>
+<ul>
+<li>240 cells, with both ends connected. The screen shows the last 244 rows. Four tick columns are added, so the picture is 244×244 cells and each cell is square</li>
+<li>Birthday number B = year × 10000 + month × 100 + day. Without a year, the year is 0</li>
+<li>Key of the day: <code>k = h32(date, B, 0x5CA7F)</code>. The date is the integer YYYYMMDD</li>
+<li>Rule: <code>candidates[h32(k, minutes since midnight, 0xC10C) mod 24]</code></li>
+<li>Noise probability: p = 0.0005 + 0.0195 × (1 − cos(2π × minute / 60)) / 2</li>
+<li>Flip: a cell flips if <code>h32(k, seconds since midnight, cell index) &lt; p × 2³²</code></li>
+<li>Color: one of 10 palette colors, <code>PAL[h32(month, day, 0xC0105) mod 10]</code>. The year and the time of day do not affect the color. The same month and day give the same color. The dark background, the bright color of flipped cells and the minute ticks are the same in every color</li>
+<li>Random date: picks one of the 366 days of a leap year (including February 29) with equal probability. Skips the day already in the input. Fills the picked month and day into the birthday inputs and computes from them. The color is not drawn separately; the formula above sets it</li>
+<li>h32 is a 32-bit integer hash</li>
+</ul>
+<h2>Rule candidate order and color palette</h2>
+<div id="ruleTable" style="overflow-x:auto"></div>
+</aside>
+<details class="src" id="sources">
+<summary>Sources</summary>
+<ol>
+<li>Wolfram, S. (1983). Statistical mechanics of cellular automata. <i>Reviews of Modern Physics</i> 55(3), 601–644.
+<a href="https://doi.org/10.1103/RevModPhys.55.601">doi:10.1103/RevModPhys.55.601</a>.
+Cited for the rule-number scheme: section 2, p. 603, writes each rule as an 8-digit binary number and its decimal value.</li>
+<li>Wolfram, S. (1986). Random sequence generation by cellular automata. <i>Advances in Applied Mathematics</i> 7(2), 123–169.
+<a href="https://doi.org/10.1016/0196-8858%2886%2990028-X">doi:10.1016/0196-8858(86)90028-X</a>.
+Cited for rule 30: the abstract gives the update rule, and the figures on pp. 128–129 show its pattern.</li>
+<li>Wolfram, S. (2002). <i>A New Kind of Science</i>. Wolfram Media. Online edition:
+<a href="https://www.wolframscience.com/nks/p27--how-do-simple-programs-behave/">p. 27</a>,
+<a href="https://www.wolframscience.com/nks/p53--more-cellular-automata/">p. 53</a>.
+Cited for the introduction of rule 30 (p. 27) and the numbering of the 256 rules from 0 to 255 (p. 53).</li>
+<li>Wolfram, S. (1984). Universality and complexity in cellular automata. <i>Physica D</i> 10(1–2), 1–35.
+<a href="https://doi.org/10.1016/0167-2789%2884%2990245-8">doi:10.1016/0167-2789(84)90245-8</a>.
+Cited for the four classes of one-dimensional cellular automata.</li>
+<li>OEIS Foundation Inc. <a href="https://oeis.org/A051023">A051023</a>: middle column of the rule 30 automaton started from a single black cell.
+Cited as the reference sequence for checking the center column computed on this page.</li>
+</ol>
+<p>The name "Wolfram code" is a common label for this numbering. Wolfram's own papers and book write "rule 30".</p>
+<p class="cred">Elementary cellular automata, numbered by the rule-number scheme of Wolfram (1983).<br>
+© 2026 Sohyun Park. Code: MIT License. Images and text: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+</details>
+
+</main>
+<script>
+'use strict';
+// 32-bit integer hash (splitmix family). Same (a,b,c) gives the same value. Source of the noise and rule choice
+function h32(a,b,c){let x=(a^Math.imul(b,0x9E3779B1)^Math.imul(c+0x632BE5AB,0x85EBCA77))>>>0;
+ x^=x>>>16;x=Math.imul(x,0x7feb352d);x^=x>>>15;x=Math.imul(x,0x846ca68b);x^=x>>>16;return x>>>0}
+// One step of an elementary cellular automaton (both ends connected). rule is the Wolfram number 0-255
+function caStep(row,out,rule){const W=row.length;for(let i=0;i<W;i++){
+ const l=row[(i-1+W)%W],c=row[i],r=row[(i+1)%W];out[i]=(rule>>((l<<2)|(c<<1)|r))&1}return out}
+// FNV-1a 32 - hash of a picture, to check that the same input gives the same picture
+function fnv(arr){let h=0x811c9dc5;for(let i=0;i<arr.length;i++){h^=arr[i];h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,'0')}
+function ruleBits(rule){let s='';for(let n=7;n>=0;n--)s+=(rule>>n)&1;return s}
+const $=id=>document.getElementById(id);
+function savePng(canvas,name){const a=document.createElement('a');a.download=name;a.href=canvas.toDataURL('image/png');a.click()}
+</script>
+<script>
+const RULES=[30, 45, 86, 135, 149, 90, 150, 105, 18, 22, 126, 146, 110, 124, 137, 193, 54, 147, 4, 50, 108, 178, 232, 184], POS={"daily": {"h1": "Pattern of the day", "sub": "One picture a day, set by the birthday and today's date. A different pattern tomorrow", "cap": "{b} · {d}", "rows": 200}, "weave": {"h1": "Fabric of time", "sub": "Ten minutes make one panel", "cap": "{b} · 600 rows up to {t}", "rows": 600}, "strip": {"h1": "Birthday strip", "sub": "Flows from left to right like recorder paper. The right edge is now", "cap": "{b} · 600 s · right edge {t}", "rows": 600, "tr": 1}, "poster": {"h1": "", "sub": "", "cap": "{bb}|{d} {t} KST · 1 row per second · 400 rows", "rows": 400}, "card": {"h1": "", "sub": "", "cap": "{bb}|Row started from the birthday at 00:00", "rows": 120}, "birth": {"h1": "Time of birth", "sub": "Computed from midnight of the birth date to the birth time", "cap": "Stopped at {d} {t} KST", "rows": 200}, "class": {"h1": "Rule monitor", "sub": "Shows the rule and the noise probability that change every minute, with the picture", "cap": "{rule}", "rows": 200}}, W=240, GUT=4;
+const q=new URLSearchParams(location.search), PV=POS[q.get('pos')]||null, H=PV?PV.rows:244, TR=!!(PV&&PV.tr);
+const FRAMES=['retro','gallery','tv','polaroid','window','float'],FR=PV?'':(q.has('frame')?(FRAMES.includes(q.get('frame'))?q.get('frame'):''):'window');
+if(FR)document.body.classList.add('fr','fr-'+FR);
+const ruleAt=(k,s)=>RULES[h32(k,Math.floor(s/60),0xC10C)%RULES.length];
+const pOf=m=>0.0005+0.0195*(1-Math.cos(2*Math.PI*m/60))/2;
+const PAL=[[211, 119, 105], [211, 155, 105], [211, 187, 105], [105, 211, 158], [105, 211, 204], [105, 176, 211], [105, 130, 211], [144, 105, 211], [211, 105, 211], [211, 105, 151]];
+const colorOf=b=>PAL[h32(b.m,b.d,0xC0105)%PAL.length];
+let cur=PAL[0];
+function kstParts(ms){const d=new Date(ms+9*3600e3);return {key:d.getUTCFullYear()*10000+(d.getUTCMonth()+1)*100+d.getUTCDate(),sec:d.getUTCHours()*3600+d.getUTCMinutes()*60+d.getUTCSeconds()}}
+let bday=null,mode='';
+const bOf=k=>bday||{y:0,m:Math.floor(k/100)%100,d:k%100};
+const bInt=b=>b.y*10000+b.m*100+b.d;
+function castOn(b){const r=new Uint8Array(W);const s=(b.y?b.y.toString(2).padStart(11,'0'):'')+b.m.toString(2).padStart(4,'0')+b.d.toString(2).padStart(5,'0');
+ const st=(W-s.length)>>1;for(let i=0;i<s.length;i++)r[st+i]=+s[i];return r}
+let key=0,nk=0,sec=-1,row=new Uint8Array(W),tmp=new Uint8Array(W),flip=new Uint8Array(W);
+const buf=new Uint8Array(W*H),bufSec=new Int32Array(H).fill(-1);let head=0;
+function push(){for(let i=0;i<W;i++)buf[head*W+i]=row[i]|(flip[i]<<1);bufSec[head]=sec;head=(head+1)%H}
+function stepTo(s){while(sec<s){sec++;
+  if(sec===0){row.set(castOn(bOf(key)));flip.fill(0)}
+  else{const rule=ruleAt(nk,sec),th=Math.floor(pOf(Math.floor(sec/60)%60)*4294967296);
+   caStep(row,tmp,rule);for(let i=0;i<W;i++){const f=h32(nk,sec,i)<th?1:0;row[i]=tmp[i]^f;flip[i]=f}}
+  if(sec>s-H)push()}}
+function reset(k,s){key=k;cur=colorOf(bOf(k));nk=h32(k,bInt(bOf(k)),0x5CA7F);sec=-1;bufSec.fill(-1);head=0;stepTo(s)}
+const cv=$('cv');cv.width=TR?H:W+GUT;cv.height=TR?W+GUT:H;const ctx=cv.getContext('2d'),img=ctx.createImageData(cv.width,cv.height);
+function draw(){const d=img.data;
+ for(let y=0;y<H;y++){const slot=(head+y)%H,s=bufSec[slot];
+  for(let x=0;x<W+GUT;x++){let c=[17,20,23];
+   if(s>=0){if(x<GUT){if(s%60===0)c=[200,200,200];else if(x===GUT-1)c=[34,38,42]}
+    else{const v=buf[slot*W+x-GUT];if(v&2)c=[242,239,232];else if(v)c=cur}}
+   const k=(TR?(x*H+y):(y*(W+GUT)+x))*4;d[k]=c[0];d[k+1]=c[1];d[k+2]=c[2];d[k+3]=255}}
+ ctx.putImageData(img,0,0);if(PV)caption();else if(FR)fcap()}
+let fcapTxt='';
+const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function fcap(){const b=bOf(key),h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,md=MON[b.m-1].slice(0,3)+' '+b.d;
+ const t=FR==='gallery'?md+' · '+String(key).replace(/(\d{4})(\d\d)(\d\d)/,'$1-$2-$3')+' '+two(h)+':'+two(m):md;
+ if(t!==fcapTxt){fcapTxt=t;$('fcap').innerHTML='<span></span>';$('fcap').firstChild.textContent=t}}
+function hash(){const a=new Uint8Array(W*H);for(let y=0;y<H;y++){const slot=(head+y)%H;if(bufSec[slot]>=0)for(let i=0;i<W;i++)a[y*W+i]=buf[slot*W+i]&1}return fnv(a)}
+const two=n=>String(n).padStart(2,'0');
+function caption(){const b=bOf(key),h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,r=ruleAt(nk,sec);
+ const md=MON[b.m-1].slice(0,3)+' '+b.d;
+ const v={b:'Birthday '+md+(b.y?', '+b.y:''),bb:'<b>'+md+'</b>',
+  d:String(key).replace(/(\d{4})(\d\d)(\d\d)/,'$1-$2-$3'),t:two(h)+':'+two(m)+':'+two(sec%60),
+  rule:`${two(h)}:${two(m)}:${two(sec%60)} · rule ${r} (${ruleBits(r)}) · p ${pOf(m).toFixed(4)}`};
+ $('cap').innerHTML=PV.cap.replace(/\{(\w+)\}/g,(_,k)=>v[k]).split('|').map(x=>'<span>'+x+'</span>').join('')}
+// birthday input
+for(let m=1;m<=12;m++)$('bm').insertAdjacentHTML('beforeend',`<option value="${m}">${MON[m-1]}</option>`);
+for(let d=1;d<=31;d++)$('bd').insertAdjacentHTML('beforeend',`<option value="${d}">${d}</option>`);
+function validB(y,m,d){if(!(m>=1&&m<=12&&d>=1&&d<=31))return false;if(y&&(y<1900||y>2100))return false;
+ const t=new Date(Date.UTC(y||2000,m-1,d));return t.getUTCMonth()===m-1&&t.getUTCDate()===d}
+function note(msg){const b=bOf(key),md=MON[b.m-1]+' '+b.d;$('bnote').textContent=msg||(mode==='rand'?`Weaving from ${md}`:bday?`Started from the birthday ${md}${bday.y?', '+bday.y:''}`
+ :mode==='today'?`Weaving from today's date: ${md}`:`The birthday field is empty. Started from today, ${md}`)}
+function setB(y,m,d,md){mode=md||'';if(m===null){bday=null}else{if(!validB(y,m,d))return false;bday={y:y||0,m,d}}
+ const p=kstParts(nowMs());reset(p.key,p.sec);draw();note();return true}
+function parseB(v){const m=/^(\d{4})?(\d\d)(\d\d)$/.exec(v||'');return m?[m[1]?+m[1]:0,+m[2],+m[3]]:null}
+$('bgo').addEventListener('click',()=>{const y=+$('by').value||0,m=+$('bm').value,d=+$('bd').value;if(!setB(y,m,d))note('No such date. Choose the month, day and year again')});
+$('bclr').addEventListener('click',()=>{$('bm').value='';$('bd').value='';$('by').value='';setB(0,null,0)});
+$('btoday').addEventListener('click',()=>{$('bm').value='';$('bd').value='';$('by').value='';setB(0,null,0,'today')});
+const MD=[31,29,31,30,31,30,31,31,30,31,30,31];
+function dayAt(i){let m=0;while(i>=MD[m]){i-=MD[m];m++}return [m+1,i+1]}
+function randomDay(i){let m,d;
+ do{[m,d]=dayAt(i!==undefined?i:Math.floor(Math.random()*366))}while(i===undefined&&bday&&m===bday.m&&d===bday.d);
+ $('bm').value=m;$('bd').value=d;$('by').value='';setB(0,m,d,'rand')}
+$('brand').addEventListener('click',()=>randomDay());
+let paused=false,fixedMs=null;
+function parseKst(v){const m=/^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)(?::(\d\d))?$/.exec(v||'');if(!m)return null;return Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0))-9*3600e3}
+function nowMs(){return fixedMs!==null?fixedMs:Date.now()}
+function syncTo(ms){const p=kstParts(ms);if(p.key!==key||p.sec<sec)reset(p.key,p.sec);else stepTo(p.sec);draw()}
+if(PV){document.body.classList.add('pv','pv-'+q.get('pos'));$('ttl').textContent=PV.h1;$('sub').textContent=PV.sub}
+if(q.get('t')){const ms=parseKst(q.get('t'));if(ms!==null){fixedMs=ms;paused=true;$('pause').setAttribute('aria-pressed','true')}}
+const qb=parseB(q.get('b'));if(qb&&validB(...qb)){bday={y:qb[0],m:qb[1],d:qb[2]};$('bm').value=qb[1];$('bd').value=qb[2];$('by').value=qb[0]||''}
+syncTo(nowMs());note();
+setInterval(()=>{if(!paused)syncTo(nowMs())},250);
+$('pause').addEventListener('click',()=>{paused=!paused;fixedMs=paused?nowMs():null;$('pause').setAttribute('aria-pressed',String(paused));if(!paused)syncTo(nowMs())});
+$('png').addEventListener('click',()=>{const o=document.createElement('canvas');o.width=cv.width*4;o.height=cv.height*4;const c=o.getContext('2d');c.imageSmoothingEnabled=false;c.drawImage(cv,0,0,o.width,o.height);savePng(o,`birthday-${key}-${sec}.png`)});
+$('ruleTable').innerHTML='<table><tr><th>rule</th>'+RULES.map(r=>`<td>${r}</td>`).join('')+'</tr></table><div style="overflow-x:auto;margin-top:8px"><table id="palTable"><tr><th>color</th>'+PAL.map((c,i)=>`<td style="background:rgb(${c});color:#111">${i}</td>`).join('')+'</tr></table></div>';
+function bindToggle(bid,pid){const b=$(bid),p=$(pid),L=b.dataset.label;b.addEventListener('click',()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));b.textContent=o?'Hide '+L.toLowerCase():L})}
+bindToggle('algoBtn','algo');bindToggle('infoBtn','info');
+window.__sr26={hash,frame:()=>FR,pal:()=>PAL,cur:()=>cur,colorOf,random:(i)=>{randomDay(i);return hash()},sec:()=>sec,key:()=>key,
+ at:(v)=>{fixedMs=parseKst(v);paused=true;syncTo(fixedMs);return hash()},
+ today:()=>{$('btoday').click();return hash()},
+ bday:(v)=>{if(v===null)setB(0,null,0);else{const b=parseB(v);setB(b[0],b[1],b[2])}return hash()}};
+</script>
+</body></html>
